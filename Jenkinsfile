@@ -115,7 +115,6 @@ timeout(240) {
 		installGo()
 		CRW_VERSION = getCrwVersion(DWNSTM_BRANCH)
 		println "CRW_VERSION = '" + CRW_VERSION + "'"
-		installSkopeo(CRW_VERSION)
 
 		echo "===== Build che-dev =====>"
 		checkout([$class: 'GitSCM', 
