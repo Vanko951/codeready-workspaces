@@ -106,7 +106,7 @@ def VER_CRW = "VER_CRW"
 def SHA_CRW = "SHA_CRW"
 
 timeout(240) {
-	node("rhel7-32gb||rhel7-16gb||rhel7-8gb"){ stage "Build ${DEV_path}, ${PAR_path}, ${CHE_DB_path}, ${CHE_WL_path}, and ${CRW_path}"
+	node("${node}"){ stage "Build ${DEV_path}, ${PAR_path}, ${CHE_DB_path}, ${CHE_WL_path}, and ${CRW_path}"
 		wrap([$class: 'TimestamperBuildWrapper']) {
 		    withCredentials([string(credentialsId:'devstudio-release.token', variable: 'GITHUB_TOKEN'), 
 		    	file(credentialsId: 'crw-build.keytab', variable: 'CRW_KEYTAB')]) {
@@ -114,7 +114,6 @@ timeout(240) {
 		installMaven()
 		installNPM()
 		installGo()
-		installYq()
 		CRW_VERSION = getCrwVersion(DWNSTM_BRANCH)
 		println "CRW_VERSION = '" + CRW_VERSION + "'"
 		installSkopeo(CRW_VERSION)
