@@ -290,8 +290,8 @@ PREVVERSION="${BASE}.${PREV}"; echo ${PREVVERSION}
 
 		def SYNC_FILES_UP2DWN = "entrypoint.sh" // in che/dockerfiles/che/ folder
 
-		#sh '''#!/bin/bash -xe
-		#cd ''' + CRW_path + '''
+		sh '''#!/bin/bash -xe
+		cd ''' + CRW_path + '''
 
 		# bootstrapping: if keytab is lost, upload to
 		# https://codeready-workspaces-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/credentials/store/system/domain/_/
