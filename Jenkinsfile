@@ -288,90 +288,90 @@ PREVVERSION="${BASE}.${PREV}"; echo ${PREVVERSION}
 		// unpack asset-*.tgz into folder where mvn can access it
 		// use that content when building assembly main and ws assembly?
 
-		def SYNC_FILES_UP2DWN = "entrypoint.sh" // in che/dockerfiles/che/ folder
+		#def SYNC_FILES_UP2DWN = "entrypoint.sh" // in che/dockerfiles/che/ folder
 
-		sh '''#!/bin/bash -xe
-		cd ''' + CRW_path + '''
+		#sh '''#!/bin/bash -xe
+		#cd ''' + CRW_path + '''
 
 		# bootstrapping: if keytab is lost, upload to
 		# https://codeready-workspaces-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/credentials/store/system/domain/_/
 		# then set Use secret text above and set Bindings > Variable (path to the file) as ''' + CRW_KEYTAB + '''
-		chmod 700 ''' + CRW_KEYTAB + ''' && chown ''' + USER + ''' ''' + CRW_KEYTAB + '''
+		#chmod 700 ''' + CRW_KEYTAB + ''' && chown ''' + USER + ''' ''' + CRW_KEYTAB + '''
 		# create .k5login file
-		echo "crw-build/codeready-workspaces-jenkins.rhev-ci-vms.eng.rdu2.redhat.com@REDHAT.COM" > ~/.k5login
-		chmod 644 ~/.k5login && chown ''' + USER + ''' ~/.k5login
-		echo "pkgs.devel.redhat.com,10.19.208.80 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAplqWKs26qsoaTxvWn3DFcdbiBxqRLhFngGiMYhbudnAj4li9/VwAJqLm1M6YfjOoJrj9dlmuXhNzkSzvyoQODaRgsjCG5FaRjuN8CSM/y+glgCYsWX1HFZSnAasLDuW0ifNLPR2RBkmWx61QKq+TxFDjASBbBywtupJcCsA5ktkjLILS+1eWndPJeSUJiOtzhoN8KIigkYveHSetnxauxv1abqwQTk5PmxRgRt20kZEFSRqZOJUlcl85sZYzNC/G7mneptJtHlcNrPgImuOdus5CW+7W49Z/1xqqWI/iRjwipgEMGusPMlSzdxDX4JzIx6R53pDpAwSAQVGDz4F9eQ==
-		" >> ~/.ssh/known_hosts
-		ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+		#echo "crw-build/codeready-workspaces-jenkins.rhev-ci-vms.eng.rdu2.redhat.com@REDHAT.COM" > ~/.k5login
+		#chmod 644 ~/.k5login && chown ''' + USER + ''' ~/.k5login
+		#echo "pkgs.devel.redhat.com,10.19.208.80 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAplqWKs26qsoaTxvWn3DFcdbiBxqRLhFngGiMYhbudnAj4li9/VwAJqLm1M6YfjOoJrj9dlmuXhNzkSzvyoQODaRgsjCG5FaRjuN8CSM/y+glgCYsWX1HFZSnAasLDuW0ifNLPR2RBkmWx61QKq+TxFDjASBbBywtupJcCsA5ktkjLILS+1eWndPJeSUJiOtzhoN8KIigkYveHSetnxauxv1abqwQTk5PmxRgRt20kZEFSRqZOJUlcl85sZYzNC/G7mneptJtHlcNrPgImuOdus5CW+7W49Z/1xqqWI/iRjwipgEMGusPMlSzdxDX4JzIx6R53pDpAwSAQVGDz4F9eQ==
+		#" >> ~/.ssh/known_hosts
+		#ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
 		# see https://mojo.redhat.com/docs/DOC-1071739
-		if [[ -f ~/.ssh/config ]]; then mv -f ~/.ssh/config{,.BAK}; fi
-		echo "
-		GSSAPIAuthentication yes
-		GSSAPIDelegateCredentials yes
-		Host pkgs.devel.redhat.com
-		User crw-build/codeready-workspaces-jenkins.rhev-ci-vms.eng.rdu2.redhat.com@REDHAT.COM
-		" > ~/.ssh/config
-		chmod 600 ~/.ssh/config
+		#if [[ -f ~/.ssh/config ]]; then mv -f ~/.ssh/config{,.BAK}; fi
+		#echo "
+		#GSSAPIAuthentication yes
+		#GSSAPIDelegateCredentials yes
+		#Host pkgs.devel.redhat.com
+		#User crw-build/codeready-workspaces-jenkins.rhev-ci-vms.eng.rdu2.redhat.com@REDHAT.COM
+		#" > ~/.ssh/config
+		#chmod 600 ~/.ssh/config
 		# initialize kerberos
-		export KRB5CCNAME=/var/tmp/crw-build_ccache
-		kinit "crw-build/codeready-workspaces-jenkins.rhev-ci-vms.eng.rdu2.redhat.com@REDHAT.COM" -kt ''' + CRW_KEYTAB + '''
-		klist # verify working
+		#export KRB5CCNAME=/var/tmp/crw-build_ccache
+		#kinit "crw-build/codeready-workspaces-jenkins.rhev-ci-vms.eng.rdu2.redhat.com@REDHAT.COM" -kt ''' + CRW_KEYTAB + '''
+		#klist # verify working
 
 		# REQUIRE: skopeo
-		curl -L -s -S https://raw.githubusercontent.com/redhat-developer/codeready-workspaces/''' + MIDSTM_BRANCH + '''/product/updateBaseImages.sh -o /tmp/updateBaseImages.sh
-		chmod +x /tmp/updateBaseImages.sh
+		#curl -L -s -S https://raw.githubusercontent.com/redhat-developer/codeready-workspaces/''' + MIDSTM_BRANCH + '''/product/updateBaseImages.sh -o /tmp/updateBaseImages.sh
+		#chmod +x /tmp/updateBaseImages.sh
 
-  		git checkout --track origin/''' + MIDSTM_BRANCH + ''' || true
-  		export GITHUB_TOKEN=''' + GITHUB_TOKEN + ''' # echo "''' + GITHUB_TOKEN + '''"
-		git config user.email "nickboldt+devstudio-release@gmail.com"
-		git config user.name "Red Hat Devstudio Release Bot"
-		git config --global push.default matching
+  		#git checkout --track origin/''' + MIDSTM_BRANCH + ''' || true
+  		#export GITHUB_TOKEN=''' + GITHUB_TOKEN + ''' # echo "''' + GITHUB_TOKEN + '''"
+		#git config user.email "nickboldt+devstudio-release@gmail.com"
+		#git config user.name "Red Hat Devstudio Release Bot"
+		#git config --global push.default matching
 
 		# SOLVED :: Fatal: Could not read Username for "https://github.com", No such device or address :: https://github.com/github/hub/issues/1644
-		git remote -v
-		git config --global hub.protocol https
-		git remote set-url origin https://\$GITHUB_TOKEN:x-oauth-basic@github.com/redhat-developer/''' + CRW_path + '''.git
-		git remote -v
+		#git remote -v
+		#git config --global hub.protocol https
+		#git remote set-url origin https://\$GITHUB_TOKEN:x-oauth-basic@github.com/redhat-developer/''' + CRW_path + '''.git
+		#git remote -v
 
 		# CRW-1213 update the che.version in the pom, so we have the latest from the upstream branch
-		sed -i pom.xml -r -e "s#<che.version>.+</che.version>#<che.version>''' + VER_CHE_PREV + '''</che.version>#g"
+		#sed -i pom.xml -r -e "s#<che.version>.+</che.version>#<che.version>''' + VER_CHE_PREV + '''</che.version>#g"
 
 		# Check if che-machine-exec and che-theia plugins are current in upstream repo and if not, add them
-		pushd dependencies/che-plugin-registry >/dev/null
-			./build/scripts/add_che_plugins.sh -b ''' + MIDSTM_BRANCH + ''' ''' + VER_CHE_PREV + '''
-		popd >/dev/null
+		#pushd dependencies/che-plugin-registry >/dev/null
+		#	./build/scripts/add_che_plugins.sh -b ''' + MIDSTM_BRANCH + ''' ''' + VER_CHE_PREV + '''
+		#popd >/dev/null
 
 		# fetch sources to be updated
-		DWNSTM_REPO="''' + DWNSTM_REPO + '''"
-		pushd ${WORKSPACE} >/dev/null
-		if [[ ! -d ${WORKSPACE}/targetdwn ]]; then git clone ssh://crw-build@pkgs.devel.redhat.com/${DWNSTM_REPO} targetdwn; fi
-		popd >/dev/null
-		pushd ${WORKSPACE}/targetdwn >/dev/null
-		git checkout --track origin/''' + DWNSTM_BRANCH + ''' || true
-		git config user.email crw-build@REDHAT.COM
-		git config user.name "CRW Build"
-		git config --global push.default matching
-		popd >/dev/null
+		#DWNSTM_REPO="''' + DWNSTM_REPO + '''"
+		#pushd ${WORKSPACE} >/dev/null
+		#if [[ ! -d ${WORKSPACE}/targetdwn ]]; then git clone ssh://crw-build@pkgs.devel.redhat.com/${DWNSTM_REPO} targetdwn; fi
+		#popd >/dev/null
+		#pushd ${WORKSPACE}/targetdwn >/dev/null
+		#git checkout --track origin/''' + DWNSTM_BRANCH + ''' || true
+		#git config user.email crw-build@REDHAT.COM
+		#git config user.name "CRW Build"
+		#git config --global push.default matching
+		#popd >/dev/null
 
 		# rsync files in upstream github to dist-git
-		for d in ''' + SYNC_FILES_UP2DWN + '''; do
-		if [[ -f ${WORKSPACE}/''' + CHE_path + '''/dockerfiles/che/${d} ]]; then
-			rsync -zrlt ${WORKSPACE}/''' + CHE_path + '''/dockerfiles/che/${d} ${WORKSPACE}/targetdwn/${d}
-		fi
-		done
+		#for d in ''' + SYNC_FILES_UP2DWN + '''; do
+		#if [[ -f ${WORKSPACE}/''' + CHE_path + '''/dockerfiles/che/${d} ]]; then
+		#	rsync -zrlt ${WORKSPACE}/''' + CHE_path + '''/dockerfiles/che/${d} ${WORKSPACE}/targetdwn/${d}
+		#fi
+		#done
 		# rsync files in upstream github to midstream GH
-		for d in ''' + SYNC_FILES_UP2DWN + '''; do
-		if [[ -f ${WORKSPACE}/''' + CHE_path + '''/dockerfiles/che/${d} ]]; then
-			rsync -zrlt ${WORKSPACE}/''' + CHE_path + '''/dockerfiles/che/${d} ${WORKSPACE}/''' + CRW_path + '''/${d}
-		fi
-		done
+		#for d in ''' + SYNC_FILES_UP2DWN + '''; do
+		#if [[ -f ${WORKSPACE}/''' + CHE_path + '''/dockerfiles/che/${d} ]]; then
+		#	rsync -zrlt ${WORKSPACE}/''' + CHE_path + '''/dockerfiles/che/${d} ${WORKSPACE}/''' + CRW_path + '''/${d}
+		#fi
+		#done
 
 		# copy rhel.Dockerfile from upstream to CRW repo
-		cp ${WORKSPACE}/''' + CHE_path + '''/dockerfiles/che/rhel.Dockerfile ${WORKSPACE}/''' + CRW_path + '''/Dockerfile
+		#cp ${WORKSPACE}/''' + CHE_path + '''/dockerfiles/che/rhel.Dockerfile ${WORKSPACE}/''' + CRW_path + '''/Dockerfile
 		# transform Che version to CRW version (in both locations)
-		sed -r -i ${WORKSPACE}/''' + CRW_path + '''/Dockerfile \
-		`# transform che rhel.Dockerfile to CRW Dockerfile` \
-		-e 's@ADD eclipse-che .+@\\
+		#sed -r -i ${WORKSPACE}/''' + CRW_path + '''/Dockerfile \
+		#`# transform che rhel.Dockerfile to CRW Dockerfile` \
+		#-e 's@ADD eclipse-che .+@\\
 # NOTE: if built in Brew, use get-sources-jenkins.sh to pull latest\\
 COPY assembly/codeready-workspaces-assembly-main/target/codeready-workspaces-assembly-main.tar.gz /tmp/codeready-workspaces-assembly-main.tar.gz\\
 RUN tar xzf /tmp/codeready-workspaces-assembly-main.tar.gz --transform="s#.*codeready-workspaces-assembly-main/*##" -C /home/user/codeready \\&\\& rm -f /tmp/codeready-workspaces-assembly-main.tar.gz\\
