@@ -110,7 +110,6 @@ timeout(240) {
 		wrap([$class: 'TimestamperBuildWrapper']) {
 		    withCredentials([string(credentialsId:'devstudio-release.token', variable: 'GITHUB_TOKEN'), 
 		    	file(credentialsId: 'crw-build.keytab', variable: 'CRW_KEYTAB')]) {
-		cleanWs()
 		installMaven()
 		installNPM()
 		installGo()
