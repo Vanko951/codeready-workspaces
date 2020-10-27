@@ -373,27 +373,27 @@ PREVVERSION="${BASE}.${PREV}"; echo ${PREVVERSION}
 		#`# transform che rhel.Dockerfile to CRW Dockerfile` \
 		#-e 's@ADD eclipse-che .+@\\
 # NOTE: if built in Brew, use get-sources-jenkins.sh to pull latest\\
-COPY assembly/codeready-workspaces-assembly-main/target/codeready-workspaces-assembly-main.tar.gz /tmp/codeready-workspaces-assembly-main.tar.gz\\
-RUN tar xzf /tmp/codeready-workspaces-assembly-main.tar.gz --transform="s#.*codeready-workspaces-assembly-main/*##" -C /home/user/codeready \\&\\& rm -f /tmp/codeready-workspaces-assembly-main.tar.gz\\
-@g' \
-		-e 's@chmod g\\+w /home/user/cacerts@chmod 777 /home/user/cacerts@g'
+#COPY assembly/codeready-workspaces-assembly-main/target/codeready-workspaces-assembly-main.tar.gz /tmp/codeready-workspaces-assembly-main.tar.gz\\
+#RUN tar xzf /tmp/codeready-workspaces-assembly-main.tar.gz --transform="s#.*codeready-workspaces-assembly-main/*##" -C /home/user/codeready \\&\\& rm -f /tmp/codeready-workspaces-assembly-main.tar.gz\\
+#@g' \
+		#-e 's@chmod g\\+w /home/user/cacerts@chmod 777 /home/user/cacerts@g'
 		# CRW-1189 applying the fix in midstream entrypoint.sh
-		sed -i ${WORKSPACE}/''' + CRW_path + '''/entrypoint.sh \
-		-e '/chmod 644 \\$JAVA_TRUST_STORE || true/d' \
-		-e 's/chmod 444 \\$JAVA_TRUST_STORE/chmod 444 \\$JAVA_TRUST_STORE || true/g'
-		CRW_VERSION="''' + CRW_VERSION_F + '''"
+		#sed -i ${WORKSPACE}/''' + CRW_path + '''/entrypoint.sh \
+		#-e '/chmod 644 \\$JAVA_TRUST_STORE || true/d' \
+		#-e 's/chmod 444 \\$JAVA_TRUST_STORE/chmod 444 \\$JAVA_TRUST_STORE || true/g'
+		#CRW_VERSION="''' + CRW_VERSION_F + '''"
 		# apply patches to downstream version
-		cp ${WORKSPACE}/''' + CRW_path + '''/Dockerfile ${WORKSPACE}/targetdwn/Dockerfile
-		sed -i ${WORKSPACE}/targetdwn/Dockerfile \
-		-e "s#FROM registry.redhat.io/#FROM #g" \
-		-e "s#FROM registry.access.redhat.com/#FROM #g" \
-		-e "s#COPY assembly/codeready-workspaces-assembly-main/target/#COPY #g" \
-		-e "s/# *RUN yum /RUN yum /g"
+		#cp ${WORKSPACE}/''' + CRW_path + '''/Dockerfile ${WORKSPACE}/targetdwn/Dockerfile
+		#sed -i ${WORKSPACE}/targetdwn/Dockerfile \
+		#-e "s#FROM registry.redhat.io/#FROM #g" \
+		#-e "s#FROM registry.access.redhat.com/#FROM #g" \
+		#-e "s#COPY assembly/codeready-workspaces-assembly-main/target/#COPY #g" \
+		#-e "s/# *RUN yum /RUN yum /g"
 
 		# CRW-1189 applying fix to downstream entrypoint.sh
-		sed -i ${WORKSPACE}/targetdwn/entrypoint.sh \
-		-e '/chmod 644 \\$JAVA_TRUST_STORE || true/d' \
-		-e 's/chmod 444 \\$JAVA_TRUST_STORE/chmod 444 \\$JAVA_TRUST_STORE || true/g'
+		#sed -i ${WORKSPACE}/targetdwn/entrypoint.sh \
+		#-e '/chmod 644 \\$JAVA_TRUST_STORE || true/d' \
+		#-e 's/chmod 444 \\$JAVA_TRUST_STORE/chmod 444 \\$JAVA_TRUST_STORE || true/g'
 
 METADATA='ENV SUMMARY="Red Hat CodeReady Workspaces server container" \\\r
     DESCRIPTION="Red Hat CodeReady Workspaces server container" \\\r
@@ -411,60 +411,60 @@ LABEL summary="$SUMMARY" \\\r
       maintainer="Nick Boldt <nboldt@redhat.com>" \\\r
       io.openshift.expose-services="" \\\r
       usage="" \r'
-echo -e "$METADATA" >> ${WORKSPACE}/targetdwn/Dockerfile
+#echo -e "$METADATA" >> ${WORKSPACE}/targetdwn/Dockerfile
 
 # push changes in github to dist-git
-cd ${WORKSPACE}/targetdwn
-if [[ \$(git diff --name-only) ]]; then # file changed
-  OLD_SHA_DWN=\$(git rev-parse HEAD) # echo ${OLD_SHA_DWN:0:8}
-  git add Dockerfile ''' + SYNC_FILES_UP2DWN + ''' . -A -f
-  /tmp/updateBaseImages.sh -b ''' + DWNSTM_BRANCH + ''' --nocommit || true
+#cd ${WORKSPACE}/targetdwn
+#if [[ \$(git diff --name-only) ]]; then # file changed
+  #OLD_SHA_DWN=\$(git rev-parse HEAD) # echo ${OLD_SHA_DWN:0:8}
+  #git add Dockerfile ''' + SYNC_FILES_UP2DWN + ''' . -A -f
+  #/tmp/updateBaseImages.sh -b ''' + DWNSTM_BRANCH + ''' --nocommit || true
   # note this might fail if we sync from a tag vs. a branch
-  git commit -s -m "[sync] Update from ''' + CHE_path + ''' @ ''' + SHA_CHE + ''' + ''' + CRW_path + ''' @ ''' + SHA_CRW + '''" \
-    Dockerfile ''' + SYNC_FILES_UP2DWN + ''' . || true
-  git push origin ''' + DWNSTM_BRANCH + ''' || true
-  NEW_SHA_DWN=\$(git rev-parse HEAD) # echo ${NEW_SHA_DWN:0:8}
-  if [[ "${OLD_SHA_DWN}" != "${NEW_SHA_DWN}" ]]; then hasChanged=1; fi
-  echo "[sync] Updated pkgs.devel @ ${NEW_SHA_DWN:0:8} from ''' + CHE_path + ''' @ ''' + SHA_CHE + ''' + ''' + CRW_path + ''' @ ''' + SHA_CRW + '''"
-else
+  #git commit -s -m "[sync] Update from ''' + CHE_path + ''' @ ''' + SHA_CHE + ''' + ''' + CRW_path + ''' @ ''' + SHA_CRW + '''" \
+  #  Dockerfile ''' + SYNC_FILES_UP2DWN + ''' . || true
+  #git push origin ''' + DWNSTM_BRANCH + ''' || true
+  #NEW_SHA_DWN=\$(git rev-parse HEAD) # echo ${NEW_SHA_DWN:0:8}
+  #if [[ "${OLD_SHA_DWN}" != "${NEW_SHA_DWN}" ]]; then hasChanged=1; fi
+  #echo "[sync] Updated pkgs.devel @ ${NEW_SHA_DWN:0:8} from ''' + CHE_path + ''' @ ''' + SHA_CHE + ''' + ''' + CRW_path + ''' @ ''' + SHA_CRW + '''"
+#else
     # file not changed, but check if base image needs an update
     # (this avoids having 2 commits for every change)
-    OLD_SHA_DWN=\$(git rev-parse HEAD) # echo ${OLD_SHA_DWN:0:8}
-    /tmp/updateBaseImages.sh -b ''' + DWNSTM_BRANCH + ''' || true
-    NEW_SHA_DWN=\$(git rev-parse HEAD) # echo ${NEW_SHA_DWN:0:8}
-    if [[ "${OLD_SHA_DWN}" != "${NEW_SHA_DWN}" ]]; then hasChanged=1; fi
-fi
+    #OLD_SHA_DWN=\$(git rev-parse HEAD) # echo ${OLD_SHA_DWN:0:8}
+    #/tmp/updateBaseImages.sh -b ''' + DWNSTM_BRANCH + ''' || true
+    #NEW_SHA_DWN=\$(git rev-parse HEAD) # echo ${NEW_SHA_DWN:0:8}
+    #if [[ "${OLD_SHA_DWN}" != "${NEW_SHA_DWN}" ]]; then hasChanged=1; fi
+#fi
 
 # push changes to github
-cd ${WORKSPACE}/''' + CRW_path + '''
-if [[ \$(git diff --name-only) ]]; then # file changed
-    OLD_SHA_MID=\$(git rev-parse HEAD) # echo ${OLD_SHA_MID:0:8}
-    git add Dockerfile ''' + SYNC_FILES_UP2DWN + ''' . -A -f
-    /tmp/updateBaseImages.sh -b ''' + MIDSTM_BRANCH + ''' --nocommit || true
+#cd ${WORKSPACE}/''' + CRW_path + '''
+#if [[ \$(git diff --name-only) ]]; then # file changed
+   # OLD_SHA_MID=\$(git rev-parse HEAD) # echo ${OLD_SHA_MID:0:8}
+   # git add Dockerfile ''' + SYNC_FILES_UP2DWN + ''' . -A -f
+   # /tmp/updateBaseImages.sh -b ''' + MIDSTM_BRANCH + ''' --nocommit || true
     # note this might fail if we sync from a tag vs. a branch
-    git commit -s -m "[sync] Update from ''' + CHE_path + ''' @ ''' + SHA_CHE + '''" \
-	  Dockerfile ''' + SYNC_FILES_UP2DWN + ''' . || true
-    git push origin ''' + MIDSTM_BRANCH + ''' || true
-    NEW_SHA_MID=\$(git rev-parse HEAD) # echo ${NEW_SHA_MID:0:8}
-    if [[ "${OLD_SHA_MID}" != "${NEW_SHA_MID}" ]]; then hasChanged=1; fi
-    echo "[sync] Updated GH @ ${NEW_SHA_MID:0:8} from ''' + CHE_path + ''' @ ''' + SHA_CHE + '''"
-else
+   # git commit -s -m "[sync] Update from ''' + CHE_path + ''' @ ''' + SHA_CHE + '''" \
+	#  Dockerfile ''' + SYNC_FILES_UP2DWN + ''' . || true
+    #git push origin ''' + MIDSTM_BRANCH + ''' || true
+    #NEW_SHA_MID=\$(git rev-parse HEAD) # echo ${NEW_SHA_MID:0:8}
+    #if [[ "${OLD_SHA_MID}" != "${NEW_SHA_MID}" ]]; then hasChanged=1; fi
+    #echo "[sync] Updated GH @ ${NEW_SHA_MID:0:8} from ''' + CHE_path + ''' @ ''' + SHA_CHE + '''"
+#else
     # file not changed, but check if base image needs an update
     # (this avoids having 2 commits for every change)
-    OLD_SHA_MID=\$(git rev-parse HEAD) # echo ${OLD_SHA_MID:0:8}
-    /tmp/updateBaseImages.sh -b ''' + MIDSTM_BRANCH + ''' || true
-    NEW_SHA_MID=\$(git rev-parse HEAD) # echo ${NEW_SHA_MID:0:8}
-    if [[ "${OLD_SHA_MID}" != "${NEW_SHA_MID}" ]]; then hasChanged=1; fi
-fi
-cd ..
+  #  OLD_SHA_MID=\$(git rev-parse HEAD) # echo ${OLD_SHA_MID:0:8}
+  #  /tmp/updateBaseImages.sh -b ''' + MIDSTM_BRANCH + ''' || true
+  #  NEW_SHA_MID=\$(git rev-parse HEAD) # echo ${NEW_SHA_MID:0:8}
+  #  if [[ "${OLD_SHA_MID}" != "${NEW_SHA_MID}" ]]; then hasChanged=1; fi
+#fi
+#cd ..
 
-if [[ ''' + FORCE_BUILD + ''' == "true" ]]; then hasChanged=1; fi
-if [[ ${hasChanged} -eq 1 ]]; then
-	touch ${WORKSPACE}/trigger-downstream-true
-fi
-if [[ ${hasChanged} -eq 0 ]]; then
-  echo "No changes upstream, nothing to commit"
-fi
+#if [[ ''' + FORCE_BUILD + ''' == "true" ]]; then hasChanged=1; fi
+#if [[ ${hasChanged} -eq 1 ]]; then
+#	touch ${WORKSPACE}/trigger-downstream-true
+#fi
+#if [[ ${hasChanged} -eq 0 ]]; then
+#  echo "No changes upstream, nothing to commit"
+#fi
 		'''
 
 		sh "mvn clean install ${MVN_FLAGS} -f ${CRW_path}/pom.xml -Dparent.version=\"${VER_CHE}\" -Dche.version=\"${VER_CHE}\" -Dcrw.dashboard.version=\"${CRW_SHAs}\" ${MVN_EXTRA_FLAGS}"
@@ -524,52 +524,5 @@ fi
 		currentBuild.description="${descriptString}"
 		}
 	  }
-	}
-}
-
-timeout(120) {
-	node("rhel7-releng"){ stage "Run get-sources-rhpkg-container-build"
-		def QUAY_REPO_PATHs=(env.ghprbPullId && env.ghprbPullId?.trim()?"":("${SCRATCH}"=="true"?"":"server-rhel8"))
-		if (fileExists(WORKSPACE + '/trigger-downstream-true') || PUSH_TO_QUAY.equals("true")) {
-			echo "[INFO] Trigger get-sources-rhpkg-container-build " + (env.ghprbPullId && env.ghprbPullId?.trim()?"for PR-${ghprbPullId} ":"") + \
-			"with SCRATCH = ${SCRATCH}, QUAY_REPO_PATHs = ${QUAY_REPO_PATHs}, JOB_BRANCH = ${MIDSTM_BRANCH}"
-
-			// trigger OSBS build
-			build(
-			job: 'get-sources-rhpkg-container-build',
-			wait: false,
-			propagate: false,
-			parameters: [
-				[
-				$class: 'StringParameterValue',
-				name: 'GIT_PATHs',
-				value: "containers/codeready-workspaces",
-				],
-				[
-				$class: 'StringParameterValue',
-				name: 'GIT_BRANCH',
-				value: "${DWNSTM_BRANCH}",
-				],
-				[
-				$class: 'StringParameterValue',
-				name: 'QUAY_REPO_PATHs',
-				value: "${QUAY_REPO_PATHs}",
-				],
-				[
-				$class: 'StringParameterValue',
-				name: 'SCRATCH',
-				value: "${SCRATCH}",
-				],
-				[
-				$class: 'StringParameterValue',
-				name: 'JOB_BRANCH',
-				value: "${CRW_VERSION_F}",
-				]
-			]
-			)
-		} else {
-			echo "No changes upstream, Brew build not triggered"
-			currentBuild.result='UNSTABLE'
-		}
 	}
 }
