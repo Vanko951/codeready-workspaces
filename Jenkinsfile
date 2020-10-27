@@ -288,7 +288,7 @@ PREVVERSION="${BASE}.${PREV}"; echo ${PREVVERSION}
 		// unpack asset-*.tgz into folder where mvn can access it
 		// use that content when building assembly main and ws assembly?
 
-		#def SYNC_FILES_UP2DWN = "entrypoint.sh" // in che/dockerfiles/che/ folder
+		def SYNC_FILES_UP2DWN = "entrypoint.sh" // in che/dockerfiles/che/ folder
 
 		#sh '''#!/bin/bash -xe
 		#cd ''' + CRW_path + '''
