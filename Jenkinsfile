@@ -45,7 +45,7 @@ sudo /usr/bin/python3 -m pip install --upgrade pip yq; jq --version; yq --versio
 def String getCrwVersion(String MIDSTM_BRANCH) {
   if (CRW_VERSION_F.equals("")) {
     CRW_VERSION_F = sh(script: '''#!/bin/bash -xe
-    curl -sSLo- https://raw.githubusercontent.com/redhat-developer/codeready-workspaces/''' + MIDSTM_BRANCH + '''/dependencies/VERSION''', returnStdout: true).trim()
+    curl -sSLo- https://raw.githubusercontent.com/Vanko951/codeready-workspaces/''' + MIDSTM_BRANCH + '''/dependencies/VERSION''', returnStdout: true).trim()
   }
   return CRW_VERSION_F
 }
@@ -158,7 +158,7 @@ timeout(240) {
 					[$class: 'DisableRemotePoll']
 				],
 				submoduleCfg: [], 
-				userRemoteConfigs: [[refspec: "+refs/pull/${env.ghprbPullId}/head:refs/remotes/origin/PR-${env.ghprbPullId}", url: "https://github.com/redhat-developer/codeready-workspaces.git"]]])
+				userRemoteConfigs: [[refspec: "+refs/pull/${env.ghprbPullId}/head:refs/remotes/origin/PR-${env.ghprbPullId}", url: "https://github.com/Vanko951/codeready-workspaces.git"]]])
 		} else {
 			checkout([$class: 'GitSCM', 
 				branches: [[name: "${MIDSTM_BRANCH}"]], 
@@ -169,7 +169,7 @@ timeout(240) {
 					[$class: 'PathRestriction', excludedRegions: 'dependencies/**'],
 				],
 				submoduleCfg: [], 
-				userRemoteConfigs: [[url: "https://github.com/redhat-developer/codeready-workspaces.git"]]])
+				userRemoteConfigs: [[url: "https://github.com/Vanko951/codeready-workspaces.git"]]])
 		}
 		VER_CRW = sh(returnStdout:true,script:"egrep \"<version>\" ${CRW_path}/pom.xml|head -2|tail -1|sed -e \"s#.*<version>\\(.\\+\\)</version>#\\1#\"").trim()
 		SHA_CRW = sh(returnStdout:true,script:"cd ${CRW_path}/ && git rev-parse --short=4 HEAD").trim()
